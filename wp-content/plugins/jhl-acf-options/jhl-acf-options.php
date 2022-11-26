@@ -14,22 +14,16 @@ if( function_exists('acf_add_options_page') ) {
      * General Options
      */
     acf_add_options_page(array(
-        'page_title'    => 'JHL General Settings',
-        'menu_title'    => 'JHL General Settings',
+        'page_title'    => 'General Settings',
+        'menu_title'    => 'General Settings',
         'menu_slug'     => 'jhl-general-settings',
         'capability'    => 'manage_options',
         'redirect'      => false
     ));
 
     acf_add_options_sub_page(array(
-        'page_title'    => 'JHL Salesforce Settings',
-        'menu_title'    => 'JHL Salesforce Settings',
-        'parent_slug'   => 'jhl-general-settings',
-    ));
-
-    acf_add_options_sub_page(array(
-        'page_title'    => 'JHL GA Settings',
-        'menu_title'    => 'JHL GA Settings',
+        'page_title'    => 'GA Settings',
+        'menu_title'    => 'GA Settings',
         'parent_slug'   => 'jhl-general-settings',
     ));
 
@@ -37,8 +31,8 @@ if( function_exists('acf_add_options_page') ) {
      * Module Options
      */
     acf_add_options_page(array(
-        'page_title'    => 'JHL Module Settings',
-        'menu_title'    => 'JHL Module Settings',
+        'page_title'    => 'Module Settings',
+        'menu_title'    => 'Module Settings',
         'menu_slug'     => 'jhl-module-settings',
         'capability'    => 'manage_options',
         'redirect'      => false
