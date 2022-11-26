@@ -137,9 +137,10 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
                 if ( strtoupper( $message ) === 'START') {
                     $user_id = wp_create_user( $sender, wp_generate_password() );
                     if( !is_wp_error( $user_id ) ){
-                        $sms = get_field( 'sms_consent', 'option' );
+                        $sms_key = 'sms_consent';
+                        $sms = get_field( $sms_key, 'option' );
                         $sc = new SMSCentral_Func();
-                        $sc->send( $sender, $sms, 'sms_consent' );
+                        $sc->send( $sender, $sms, $sms_key, $sms_key );
                     }else{
                         error_log( print_r($user_id, true) );
                     }
