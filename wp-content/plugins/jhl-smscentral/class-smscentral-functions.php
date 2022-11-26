@@ -48,6 +48,7 @@ if ( ! class_exists( 'SMSCentral_Func' ) ) {
                 update_user_meta( $user->ID, 'sms_context', $context );
             }
 
+            error_log( print_r( $result, true ) );
             return $result;
         }
     }
