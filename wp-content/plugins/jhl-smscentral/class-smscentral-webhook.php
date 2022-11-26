@@ -140,6 +140,8 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
                         $sms = get_field( 'sms_consent', 'option' );
                         $sc = new SMSCentral_Func();
                         $sc->send( $sender, $sms, 'sms_consent' );
+                    }else{
+                        error_log( print_r($user_id, true) );
                     }
                 }
             }
