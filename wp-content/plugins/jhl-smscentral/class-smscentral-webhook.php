@@ -95,7 +95,6 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
             $message  = trim ($input->replyContent);
 
             $user = get_user_by ('login', $sender);
-            error_log( print_r( $user, true ) );
             if ( $user ) {
                 error_log( "User already exists, start handling user response." );
 
@@ -158,7 +157,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
                 $sms = get_field( 'sms_welcome', 'option' );
                 $sc->send( $user->user_login, $sms, 'sms_welcome' );
 
-                sleep (5);
+                sleep (8);
 
                 $sms = get_field( 'sms_q_a', 'option' );
                 $sc->send( $user->user_login, $sms, 'sms_q_a', 'sms_q_a' );
@@ -212,7 +211,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
                 $sms_key     = 'sms_q_' . $q_num ;
                 $sms_sent_dt = $sms_key . '_sent_dt';
                 if ($i < 7) {
-                    if ( mb_strpos( $q_b_answer, "$i" ) ) {
+                    if ( mb_strpos( $q_b_answer, "$i" ) !== false ) {
                         if ( empty( get_user_meta( $user->ID, $sms_sent_dt, true ) ) ) {
                             $sms = get_field( $sms_key, 'option' );
                             $sc->send( $user->user_login, $sms, $sms_key, $sms_key );
