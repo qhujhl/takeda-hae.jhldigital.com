@@ -41,7 +41,7 @@ if ( ! class_exists( 'SMSCentral_Func' ) ) {
             $user = get_user_by('login', $to);
 
             if ( !empty( $msg_key ) ) {
-                update_user_meta( $user->ID, $msg_key . '_sent_dt', current_datetime().format('Y-m-d H:i:s') );
+                update_user_meta( $user->ID, $msg_key . '_sent_dt', current_datetime()->format('Y-m-d H:i:s') );
             }
 
             if ( !empty( $context ) ) {

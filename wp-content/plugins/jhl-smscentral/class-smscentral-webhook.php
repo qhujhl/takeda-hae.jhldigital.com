@@ -147,7 +147,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
 
         private function handle_consent( $user, $message, $context ){
             update_user_meta( $user->ID, $context . '_answer', $message );
-            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime().format('Y-m-d H:i:s') );
+            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
             $sc = new SMSCentral_Func();
             $message = strtoupper( $message );
@@ -174,7 +174,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
 
         private function handle_answer_q_a( $user, $message, $context ){
             update_user_meta( $user->ID, $context . '_answer', $message );
-            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime().format('Y-m-d H:i:s') );
+            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
             $sc = new SMSCentral_Func();
             $message = strtoupper( $message );
@@ -195,7 +195,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
 
         private function handle_answer_q_b( $user, $message, $context ){
             update_user_meta( $user->ID, $context . '_answer', $message );
-            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime().format('Y-m-d H:i:s') );
+            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
             $this->send_q1_12( $user );
         }
@@ -228,7 +228,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
 
         private function handle_q1_12( $user, $message, $context ) {
             update_user_meta( $user->ID, $context . '_answer', $message );
-            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime().format('Y-m-d H:i:s') );
+            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
             if( $context === 'sms_q_12' ){
                 $sms_key = 'sms_result';
@@ -243,7 +243,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
 
         private function handle_answer_result( $user, $message, $context ) {
             update_user_meta( $user->ID, $context . '_answer', $message );
-            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime().format('Y-m-d H:i:s') );
+            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
         }
 
