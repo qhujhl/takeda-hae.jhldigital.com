@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+
+.j-color-primary { color: #0D6EFD }
+.j-color-secondary { color: #6C757D }
+.j-color-success { color: #198754 }
+.j-color-info { color: #0DCAF0 }
+.j-color-warning { color: #FFC107 }
+.j-color-danger { color: #DC3545 }
+.j-color-light { color: #F8F9FA }
+.j-color-dark { color: #212529 }
+
+.j-bg-primary { background-color: #0D6EFD }
+.j-bg-secondary { background-color: #6C757D }
+.j-bg-success { background-color: #198754 }
+.j-bg-info { background-color: #0DCAF0 }
+.j-bg-warning { background-color: #FFC107 }
+.j-bg-danger { background-color: #DC3545 !important; }
+.j-bg-light { background-color: #F8F9FA }
+.j-bg-dark { background-color: #212529 }

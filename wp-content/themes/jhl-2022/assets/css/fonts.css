@@ -1,0 +1,11 @@
+@CHARSET "UTF-8";
+
+/*
+Sample 
+@font-face {
+  font-family: 'MyWebFont';
+  src: url('webfont.eot'), 
+  	   url('myfont.woff') format('woff'),
+       url('myfont.ttf') format('truetype');
+}
+*/
