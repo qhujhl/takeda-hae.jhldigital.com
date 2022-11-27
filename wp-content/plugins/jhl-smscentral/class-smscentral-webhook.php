@@ -86,11 +86,12 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
          * Handles the HTTP Request sent to your site's webhook
          */
         public function webhook_handler() {
-            $input = json_decode( file_get_contents('php://input') );
+            $input_raw =  file_get_contents('php://input');
+            error_log( print_r( $input_raw, true ) );
 
-            error_log( print_r( $_POST, true ) );
-            error_log( print_r( $_REQUEST, true ) );
+            $input = json_decode( $input_raw );
             error_log( print_r( $input, true ) );
+
             if( ! $input ) return;
 
             $sender   = str_replace ('+', '', $input->sourceAddress);
