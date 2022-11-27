@@ -132,6 +132,10 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
                     case 'sms_result':
                         $this->handle_answer_result( $user, $message, $sms_context );
                         break;
+                    case 'sms_hcp_login_approval':
+                        $this->handle_hcp_login_approval( $user, $message, $sms_context );
+                        break;
+
                 }
 
             } else {
@@ -149,6 +153,12 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
                     }
                 }
             }
+        }
+
+        private function handle_hcp_login_approval( $user, $message, $context ){
+            update_user_meta( $user->ID, $context . '_answer', $message );
+            update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
+
         }
 
         private function handle_consent( $user, $message, $context ){

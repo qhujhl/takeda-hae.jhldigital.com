@@ -16,6 +16,12 @@ function hcp_query_pt() : void
         if( $pt === false ){
             wp_send_json_error( 'Invalid patient number.' );
         } else {
+            $sms_key = 'sms_hcp_login_approval';
+            $sms = get_field( $sms_key, 'option' );
+
+            $sc = new SMSCentral_Func();
+            $sc->send( $data['pt_number'], $sms, $sms_key, $sms_key );
+
             wp_send_json_success("Please wait, pending patient approval...");
         }
 
@@ -37,8 +43,8 @@ function query_pt_approval() : void
     if( $pt === false ){
         wp_send_json_error( 'Invalid patient number.' );
     } else {
-        $approval = get_user_meta( $pt->ID, 'hcp_login_approval', true );
-        if( $approval === 'approved' ){
+        $approval = get_user_meta( $pt->ID, 'sms_hcp_login_approval_answer', true );
+        if( strtoupper($approval) === 'YES' ){
             $uuid = get_user_meta( $pt->ID, 'uuid', true );
             if( empty($uuid) ){
                 $uuid = wp_generate_uuid4();
