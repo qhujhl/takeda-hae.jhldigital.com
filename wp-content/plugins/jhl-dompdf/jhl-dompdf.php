@@ -18,41 +18,59 @@
 require 'vendor/autoload.php';
 
 use Dompdf\Dompdf;
+use Dompdf\Options;
 
-function jhl_gen_pdf( $post_slug, $filename = '', $merge_token = array() ) {
+function jhl_gen_pdf( $post_slug, $config = array(), $merge_tokens = array() ) {
+    $config = array_merge(
+        array(
+            'paper_size'        => 'A4',
+            'paper_orientation' => 'portrait',
+            'output_filename'   => $post_slug . ".pdf",
+            'default_font'      => 'sans-serif',
+            'output_mode'       => 'file'
+        ),
+        $config
+    );
 
     $p = get_page_by_path( $post_slug,OBJECT,'component' );
     if( is_null( $p ) ) { return; }
 
-    $content = do_shortcode( $p->post_content );
+    $pdf_template = do_shortcode( $p->post_content );
+    foreach ($merge_tokens as $key => $val){
+        $pdf_template = str_replace( $key, $val,  $pdf_template);
+    }
 
     // instantiate and use the dompdf class
-    $dompdf = new Dompdf();
-    $dompdf->loadHtml( $content );
+    $options = new Options();
+    $options->set( 'defaultFont', $config['default_font'] );
+    $options->setIsRemoteEnabled(true);
+    //$options->setDebugPng(true);
+
+    $dompdf = new Dompdf( $options );
+    $dompdf->loadHtml( $pdf_template );
 
     // (Optional) Setup the paper size and orientation
-    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->setPaper( $config['paper_size'], 'portrait' );
 
     // Render the HTML as PDF
     $dompdf->render();
 
     // Output the generated PDF to Browser
-    //$dompdf->stream();
-
-    if ( empty($filename) ) {
-        $filename = current_time('timestamp') . ".pdf";
-    }
-    $uploads_dir = trailingslashit( wp_upload_dir()['basedir'] ) . 'dompdf';
-    wp_mkdir_p( $uploads_dir );
-
-    $filepath = trailingslashit( $uploads_dir ) . $filename;
-    $output = $dompdf->output();
-    $result = file_put_contents( $filepath, $output );
-
-    if ( $result !== false ) {
-        return $filepath;
+    if ( $config['output_mode'] === 'stream' ) {
+        $dompdf->stream();
+        wp_die();
     } else {
-        return false;
-    }
+        $uploads_dir = trailingslashit( wp_upload_dir()['basedir'] ) . 'dompdf';
+        wp_mkdir_p( $uploads_dir );
 
+        $filepath = trailingslashit( $uploads_dir ) . $config['output_filename'];
+        $output = $dompdf->output();
+        $result = file_put_contents( $filepath, $output );
+
+        if ( $result !== false ) {
+            return $filepath;
+        } else {
+            return false;
+        }
+    }
 }
