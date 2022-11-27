@@ -20,6 +20,7 @@ global $post;
 ?>
 <div class="page-main <?php echo $post->post_name; ?>">
 <?php
+$post = ju_reload_post_content_from_file($post);
 echo do_shortcode(do_blocks($post->post_content));
 ?>
 </div>

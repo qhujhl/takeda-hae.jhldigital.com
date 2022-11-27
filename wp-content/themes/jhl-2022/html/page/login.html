@@ -1,0 +1,115 @@
+<div class="container">
+    <div class="row py-4">
+        <div class="col">
+            <img src="[THEMEURL]/assets/images/takeda_logo.svg" style="max-width: 140px;">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" style="background: rgb(247,247,247);">
+    <form class="row pt-5 pb-4" action="hcp_query_pt">
+        <div class="col-12 text-center mt-5">
+            <img src="[THEMEURL]/assets/images/hae_as_tracker.svg" style="max-width: 350px;">
+        </div>
+        <div class="col-12 pt-3 text-center">
+            Enter mobile number
+        </div>
+        <div class="col-12 pt-3 text-center">
+            <input name="pt_number" class="form-control m-auto" type="number" placeholder="" aria-label="" style="max-width: 320px;">
+        </div>
+        <div class="col-12 pt-4 pb-4 text-center">
+            <button type="submit" class="btn btn-danger m-auto px-5">SUBMIT</button>
+        </div>
+    </form>
+</div>
+
+<div class="container mt-2">
+    <div class="row py-4">
+        <div class="col">
+            <img src="[THEMEURL]/assets/images/takhzyro.svg" style="max-width: 200px;">
+        </div>
+        <div class="col text-end">
+            <img src="[THEMEURL]/assets/images/takeda_logo.svg" style="max-width: 140px;">
+        </div>
+    </div>
+</div>
+
+<script>
+    (function ($){
+        $( "form" ).on( "submit", function( event ) {
+            event.preventDefault();
+            let form = this;
+
+            add_loading( $(this).find( ":submit" ) );
+
+            $( form ).find( "div.info" ).remove();
+
+            $.post(
+                Ajax.ajaxurl,
+                {
+                    action: $( form ).attr( 'action' ),
+                    nonce:  Ajax.nonce,
+                    data:   $( form ).serialize()
+                },
+                function( result ) {
+                    if( result.success ){
+                        $( form ).append('<div class="col-12 text-center info"><div class="alert alert-success m-auto" role="alert" style="max-width: 400px;">'+result.data+'</div></div>');
+                        setInterval(function() {
+                            query_pt_approval( $( 'input[name="pt_number"]' ).val() );
+                        }, 2000);
+                    }else {
+                        $( form ).append('<div class="col-12 text-center info"><div class="alert alert-danger m-auto" role="alert" style="max-width: 400px;">'+result.data+'</div></div>');
+                        remove_loading( $( form ).find(":submit") );
+                    }
+                } )
+                .done( function( data, textStatus, jqXHR ) {
+                    /** DO NOTHING HERE, FOR EXTENSION */
+                } )
+                .fail( function( jqXHR, textStatus, errorThrown ) {
+                    $( form ).append('<div class="alert alert-danger" role="alert">'+JSON.stringify( jqXHR )+'</div>');
+                    remove_loading( $( form ).find(":submit") );
+                } )
+                .always( function( data ) {
+
+                } );
+
+        });
+
+        function query_pt_approval( pt_number ){
+            $.post(
+                Ajax.ajaxurl,
+                {
+                    action: 'query_pt_approval',
+                    nonce:  Ajax.nonce,
+                    data:   pt_number
+                },
+                function( result ) {
+                    console.log(result);
+                    if( result.success ){
+                        window.location.replace(result.data);
+                    }
+                } )
+                .done( function( data, textStatus, jqXHR ) {
+                    /** DO NOTHING HERE, FOR EXTENSION */
+                } )
+                .fail( function( jqXHR, textStatus, errorThrown ) {
+
+                } )
+                .always( function( data ) {
+
+                } );
+
+
+        }
+
+        function add_loading( selector ) {
+            $( selector ).prop('disabled', true);;
+            $( selector ).append(' <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+        }
+
+        function remove_loading( selector ) {
+            $( selector ).prop('disabled', false);;
+            $( selector ).find( '.spinner-border' ).remove();
+        }
+    })(jQuery)
+</script>
