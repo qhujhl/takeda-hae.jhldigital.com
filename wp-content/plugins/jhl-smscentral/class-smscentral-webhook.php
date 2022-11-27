@@ -252,6 +252,8 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
             update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
             $GLOBALS['user_email'] = $message;
+
+            wp_update_user( array('ID'=> $user->ID, 'user_email' => esc_attr( $GLOBALS['user_email'] ) ) );
             jhl_mail_send('mail-your-hae-as-results');
         }
 
