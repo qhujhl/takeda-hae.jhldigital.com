@@ -3,7 +3,7 @@
 /**
  * @param string $slug
  */
-function jhl_mail_send(string $slug) {
+function jhl_mail_send( string $slug, $attachments = array() ) {
     // Step 1: get original mail template, subject and content
     $mail = get_page_by_path( $slug,OBJECT,'jhl_mail' );
     if( is_null( $mail ) ) { return; }
@@ -33,6 +33,6 @@ function jhl_mail_send(string $slug) {
 
     // Step 5: send email
     foreach ($to_arr as $to){
-        wp_mail( $to, $title, $content, $headers );
+        wp_mail( $to, $title, $content, $headers, $attachments );
     }
 }
