@@ -25,6 +25,7 @@ $users = get_users(array(
 ));
 $user = $users[0];
 
+update_user_meta( $user->ID, 'hcp_login_approval', '');
 //Generate PDF
 $style_highlight = "color: red; font-weight: bold;";
 $merge_tokens = array( );
