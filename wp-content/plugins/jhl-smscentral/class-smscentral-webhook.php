@@ -86,7 +86,8 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
          * Handles the HTTP Request sent to your site's webhook
          */
         public function webhook_handler() {
-            $input_raw =  file_get_contents('php://input');
+            $input_raw = file_get_contents('php://input');
+            $input_raw = preg_replace("/[\r\n]+/", " ", $input_raw);
             error_log( print_r( $input_raw, true ) );
 
             $input = json_decode( $input_raw );
