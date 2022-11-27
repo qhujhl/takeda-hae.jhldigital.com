@@ -86,8 +86,23 @@ function jhl_shortcode_session( $args ): string
     if( empty( $args['key'] ) ){
         return '';
     }else{
-        session_start();
-        return isset($_SESSION[$args['key']]) ? '' : $_SESSION[$args['key']];
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+
+        return isset($_SESSION[$args['key']]) ? $_SESSION[$args['key']] : '' ;
+    }
+}
+
+/**
+ * Usage: [GLOBAL key="xxx"]
+ */
+add_shortcode('GLOBAL', 'jhl_shortcode_global');
+function jhl_shortcode_global( $args ): string
+{
+    if( empty( $args['key'] ) ){
+        return '';
+    }else{
+
+        return isset($GLOBALS[$args['key']]) ? $GLOBALS[$args['key']] : '' ;
     }
 }
 

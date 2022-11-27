@@ -251,6 +251,8 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
             update_user_meta( $user->ID, $context . '_answer', $message );
             update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
+            $GLOBALS['user_email'] = $message;
+            jhl_mail_send('mail-your-hae-as-results');
         }
 
     }
