@@ -2,6 +2,7 @@
 
 /**
  * @param string $slug
+ * @param array $attachments
  */
 function jhl_mail_send( string $slug, $attachments = array() ) {
     // Step 1: get original mail template, subject and content

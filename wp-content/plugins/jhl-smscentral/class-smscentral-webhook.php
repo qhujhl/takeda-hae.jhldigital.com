@@ -252,9 +252,34 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
             update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
             $GLOBALS['user_email'] = $message;
-
             wp_update_user( array('ID'=> $user->ID, 'user_email' => esc_attr( $GLOBALS['user_email'] ) ) );
-            jhl_mail_send('mail-your-hae-as-results');
+
+            //Generate PDF
+            $style_highlight = "color: red; font-weight: bold;";
+            $merge_tokens = array( );
+            for( $i = 1; $i < 13; $i++ ) {
+                $q_num          = substr( "0" . $i, -2 );
+                $sms_key        = 'sms_q_' . $q_num ;
+                $sms_key_answer = 'sms_q_' . $q_num . "_answer";
+                $answer         = get_user_meta( $user->ID, $sms_key_answer, true);
+                $token_key      = "{{".$sms_key."_".$answer."}}";
+
+                $merge_tokens[$token_key] = $style_highlight;
+            }
+            error_log( print_r($merge_tokens, true) );
+
+            $attachments = array();
+            $config = array (
+                'output_filename' => 'HAE AS Results ' . current_time('timestamp') . '.pdf',
+            );
+            $result_pdf = jhl_gen_pdf( 'hae-as-result', $config, $merge_tokens );
+            if ( $result_pdf !== false ){
+                $attachments = array( $result_pdf );
+            }
+
+            jhl_mail_send( 'mail-your-hae-as-results', $attachments );
+
+            update_user_meta( $user->ID, 'sms_context', 'sms_result_sent' );
         }
 
     }
