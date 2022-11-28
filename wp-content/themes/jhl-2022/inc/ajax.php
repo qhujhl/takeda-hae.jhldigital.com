@@ -11,16 +11,16 @@ function hcp_query_pt() : void
     parse_str( $_POST['data'], $data );
 
     if( !empty($data['pt_number']) ){
-        $pt = get_user_by( 'login', $data['pt_number'] );
+        $pt = get_pt_data( $data['pt_number'] );
 
-        if( $pt === false ){
+        if( $pt === null ){
             wp_send_json_error( 'Invalid patient number.' );
         } else {
             $sms_key = 'sms_hcp_login_approval';
             $sms = get_field( $sms_key, 'option' );
 
             $sc = new SMSCentral_Func();
-            $sc->send( $data['pt_number'], $sms, $sms_key, $sms_key );
+            $sc->send( $pt->user_login, $sms, $sms_key, $sms_key );
 
             wp_send_json_success("Please wait, pending patient approval...");
         }
@@ -44,8 +44,7 @@ function query_pt_approval() : void
         wp_die();
     }
 
-    global $wpdb;
-    $pt = $wpdb->get_row("SELECT ID FROM wp_user WHERE user_login LIKE '%" . substr($pt_number, -9)."'" );
+    $pt = get_pt_data( $pt_number );
     if( $pt === null ){
         wp_send_json_error( 'Invalid patient number.' );
 
@@ -73,4 +72,10 @@ function verify_nonce_ajax( $nonce, $action = -1 ){
         $error->add( 'message_error', "Session check failed, please refresh page and try again." );
         wp_send_json_error( $error );
     }
+}
+
+function get_pt_data ( $pt_number ){
+    global $wpdb;
+
+    return $wpdb->get_row("SELECT ID, user_login FROM wp_user WHERE user_login LIKE '%" . substr($pt_number, -9)."'" );
 }
