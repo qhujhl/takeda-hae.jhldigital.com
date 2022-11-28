@@ -39,9 +39,16 @@ function query_pt_approval() : void
 {
     $pt_number = $_POST['data'];
 
-    $pt = get_user_by( 'login', $pt_number );
-    if( $pt === false ){
+    if( strlen($pt_number) < 10 ){
+        wp_send_json_error("Invalid patient number.");
+        wp_die();
+    }
+
+    global $wpdb;
+    $pt = $wpdb->get_row("SELECT ID FROM wp_user WHERE user_login LIKE '%" . substr($pt_number, -9)."'" );
+    if( $pt === null ){
         wp_send_json_error( 'Invalid patient number.' );
+
     } else {
         $approval = get_user_meta( $pt->ID, 'sms_hcp_login_approval_answer', true );
         if( strtoupper($approval) === 'YES' ){

@@ -87,7 +87,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
          */
         public function webhook_handler() {
             $input_raw = file_get_contents('php://input');
-            $input_raw = preg_replace("/[\r\n]+/", " ", $input_raw);
+            $input_raw = preg_replace( "/[\r\n]+/", " ", $input_raw );
             error_log( print_r( $input_raw, true ) );
 
             $input = json_decode( $input_raw );
@@ -95,8 +95,8 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
 
             if( ! $input ) return;
 
-            $sender   = str_replace ('+', '', $input->sourceAddress);
-            $message  = trim ($input->replyContent);
+            $sender   = str_replace( '+', '', $input->sourceAddress );
+            $message  = trim( $input->replyContent );
 
             $user = get_user_by ('login', $sender);
             if ( $user ) {
@@ -104,6 +104,17 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
 
                 $sms_context = get_user_meta( $user->ID, 'sms_context', true );
                 error_log( 'SMS CONTEXT = ' . $sms_context );
+
+                // If user input is an email, then check and send back result
+                if( is_email( $message ) ){
+                    if(
+                        strpos( $sms_context, 'sms_consent') === false &&
+                        strpos( $sms_context, 'sms_q_') === false
+                    ){
+                        $this->handle_answer_result( $user, $message, 'sms_result' );
+                        return;
+                    }
+                }
 
                 switch( $sms_context ){
                     case 'sms_consent':
@@ -210,6 +221,21 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
         }
 
         private function handle_answer_q_b( $user, $message, $context ){
+            if(
+                strpos( $message, "1" ) === false &&
+                strpos( $message, "2" ) === false &&
+                strpos( $message, "3" ) === false &&
+                strpos( $message, "4" ) === false &&
+                strpos( $message, "5" ) === false &&
+                strpos( $message, "6" ) === false
+            ){
+                $msg_key = 'sms_invalid_answer_number';
+                $sms = get_field( $msg_key, 'option' );
+                $sc = new SMSCentral_Func();
+                $sc->send( $user->user_login, $sms, $msg_key );
+
+                return;
+            }
             update_user_meta( $user->ID, $context . '_answer', $message );
             update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
@@ -243,6 +269,48 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
         }
 
         private function handle_q1_12( $user, $message, $context ) {
+            switch( $context ){
+                case 'sms_q_01':
+                case 'sms_q_02':
+                case 'sms_q_04':
+                case 'sms_q_10':
+                case 'sms_q_11':
+                case 'sms_q_12':
+                    if( $message !== '0' && $message !== '1' && $message !== '2' && $message !== '3' ){
+                        $msg_key = 'sms_invalid_answer_number';
+                        $sms = get_field( $msg_key, 'option' );
+                        $sc = new SMSCentral_Func();
+                        $sc->send( $user->user_login, $sms, $msg_key );
+
+                        return;
+                    }
+                    break;
+                case 'sms_q_03':
+                case 'sms_q_05':
+                case 'sms_q_06':
+                case 'sms_q_07':
+                case 'sms_q_08':
+                    if( $message !== '0' && $message !== '1' && $message !== '2' ){
+                        $msg_key = 'sms_invalid_answer_number';
+                        $sms = get_field( $msg_key, 'option' );
+                        $sc = new SMSCentral_Func();
+                        $sc->send( $user->user_login, $sms, $msg_key );
+
+                        return;
+                    }
+                    break;
+                case 'sms_q_09':
+                    if( $message !== '0' && $message !== '1' ){
+                        $msg_key = 'sms_invalid_answer_number';
+                        $sms = get_field( $msg_key, 'option' );
+                        $sc = new SMSCentral_Func();
+                        $sc->send( $user->user_login, $sms, $msg_key );
+
+                        return;
+                    }
+                    break;
+            }
+
             update_user_meta( $user->ID, $context . '_answer', $message );
             update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
@@ -258,6 +326,15 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
         }
 
         private function handle_answer_result( $user, $message, $context ) {
+            if( !is_email($message) ){
+                $msg_key = 'sms_invalid_answer_email';
+                $sms = get_field( $msg_key, 'option' );
+                $sc = new SMSCentral_Func();
+                $sc->send( $user->user_login, $sms, $msg_key );
+
+                return;
+            }
+
             update_user_meta( $user->ID, $context . '_answer', $message );
             update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
