@@ -167,6 +167,14 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
         }
 
         private function handle_hcp_login_approval( $user, $message, $context ){
+            $message = strtoupper( $message );
+            $sc = new SMSCentral_Func();
+            if ( $message !== 'YES' && $message !== 'NO' ) {
+                $msg_key = 'sms_invalid_answer_yes_no';
+                $sms = get_field( $msg_key, 'option' );
+                $sc->send( $user->user_login, $sms, $msg_key );
+            }
+
             update_user_meta( $user->ID, $context . '_answer', $message );
             update_user_meta( $user->ID, $context . '_answer_dt', current_datetime()->format('Y-m-d H:i:s') );
 
