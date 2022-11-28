@@ -14,7 +14,9 @@
  * @since 1.0
  * @version 1.0
  */
-get_header();
+if(session_status() !== PHP_SESSION_ACTIVE ) {
+    session_start();
+}
 
 global $post;
 $uuid = $_GET['token'];
@@ -25,7 +27,25 @@ $users = get_users(array(
 ));
 $user = $users[0];
 
-update_user_meta( $user->ID, 'hcp_login_approval', '');
+if($user){
+    if( isset($_SESSION['login_approved']) && $_SESSION['login_approved'] === "YES" ){
+
+    } else {
+        $approved = get_user_meta( $user->ID, 'sms_hcp_login_approval_answer', true );
+        if( strtoupper($approved) === "YES" ){
+            $_SESSION['login_approved'] = "YES";
+            update_user_meta( $user->ID, 'sms_hcp_login_approval_answer', '');
+        } else {
+            wp_redirect("/");
+            exit;
+        }
+    }
+}else{
+    echo "<h1 class='p-5'>Invalid token</h1>";
+}
+
+get_header();
+
 //Generate PDF
 $style_highlight = "color: red; font-weight: bold;";
 $merge_tokens = array( );
