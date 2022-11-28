@@ -98,6 +98,14 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
             $sender   = str_replace( '+', '', $input->sourceAddress );
             $message  = trim( $input->replyContent );
 
+            //Always delete user for a fresh start when text 'START'
+            if ( strtoupper( $message ) === 'START' ) {
+                $user = get_user_by ('login', $sender);
+                if ( $user ) {
+                    wp_delete_user( $user->ID );
+                }
+            }
+
             $user = get_user_by ('login', $sender);
             if ( $user ) {
                 error_log( "User already exists, start handling user response." );
