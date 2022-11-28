@@ -102,6 +102,7 @@ if ( ! class_exists( 'SMSCentral_Webhook' ) ) {
             if ( strtoupper( $message ) === 'START' ) {
                 $user = get_user_by ('login', $sender);
                 if ( $user ) {
+                    require_once( ABSPATH . 'wp-admin/includes/user.php' );
                     wp_delete_user( $user->ID );
                 }
             }
