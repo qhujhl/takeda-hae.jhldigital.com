@@ -10,23 +10,28 @@ function hcp_query_pt() : void
     $data = array();
     parse_str( $_POST['data'], $data );
 
-    if( !empty($data['pt_number']) ){
-        $pt = get_pt_data( $data['pt_number'] );
+    if( empty($data['pt_number']) ){
+        wp_send_json_error("Please enter patient number.");
+        wp_die();
+    }
 
-        if( $pt === null ){
-            wp_send_json_error( 'Invalid patient number.' );
-        } else {
-            $sms_key = 'sms_hcp_login_approval';
-            $sms = get_field( $sms_key, 'option' );
+    if( strlen($data['pt_number']) < 10 ){
+        wp_send_json_error("Invalid patient number.");
+        wp_die();
+    }
 
-            $sc = new SMSCentral_Func();
-            $sc->send( $pt->user_login, $sms, $sms_key, $sms_key );
+    $pt = get_pt_data( $data['pt_number'] );
 
-            wp_send_json_success("Please wait, pending patient approval...");
-        }
-
+    if( $pt === null ){
+        wp_send_json_error( 'Invalid patient number.' );
     } else {
-        wp_send_json_error( 'Please enter patient number.' );
+        $sms_key = 'sms_hcp_login_approval';
+        $sms = get_field( $sms_key, 'option' );
+
+        $sc = new SMSCentral_Func();
+        $sc->send( $pt->user_login, $sms, $sms_key, $sms_key );
+
+        wp_send_json_success("Please wait, pending patient approval...");
     }
 
     wp_die();
@@ -77,5 +82,5 @@ function verify_nonce_ajax( $nonce, $action = -1 ){
 function get_pt_data ( $pt_number ){
     global $wpdb;
 
-    return $wpdb->get_row("SELECT ID, user_login FROM wp_user WHERE user_login LIKE '%" . substr($pt_number, -9)."'" );
+    return $wpdb->get_row("SELECT ID, user_login FROM wp_users WHERE user_login LIKE '%" . substr($pt_number, -9)."'" );
 }
