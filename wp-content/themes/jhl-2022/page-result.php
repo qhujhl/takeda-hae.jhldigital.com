@@ -42,6 +42,7 @@ if($user){
     }
 }else{
     echo "<h1 class='p-5'>Invalid token</h1>";
+    wp_die();
 }
 
 get_header();
